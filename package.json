@@ -1,6 +1,6 @@
 {
   "name": "@evander0x/use-defer",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A framework-agnostic hook for deferring operations using requestAnimationFrame",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
