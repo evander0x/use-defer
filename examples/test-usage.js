@@ -1,16 +1,13 @@
 // 简单的使用示例
-const { useDefer, useCoreDefer } = require("../dist/index");
+const { useCoreDefer } = require("../dist/index");
 
-console.log("=== useDefer 测试 ===");
+console.log("=== useCoreDefer 测试 ===");
 
-// 测试自动检测的 useDefer
-const defer = useDefer(100);
-console.log("useDefer 类型:", typeof defer);
-console.log("defer(10) 结果:", defer(10));
+// 测试框架无关的 useCoreDefer
+const defer = useCoreDefer(100);
+console.log("useCoreDefer 类型:", typeof defer);
 
-// 测试核心实现
-const coreDefer = useCoreDefer(100);
-console.log("useCoreDefer 类型:", typeof coreDefer);
-console.log("coreDefer(10) 结果:", coreDefer(10));
-
-console.log("=== 测试完成 ===");
+// 测试基本功能
+console.log("初始状态:", defer(0));
+console.log("第 10 帧状态:", defer(10));
+console.log("第 50 帧状态:", defer(50));

@@ -1,102 +1,160 @@
-# 代码结构说明
+# use-defer 代码结构说明
 
-## 文件组织
+## 项目结构
 
 ```
-src/
-├── index.ts          # 主入口文件（自动框架检测）
-├── core/             # 核心功能
-│   ├── utils.ts      # 工具函数（requestAnimationFrame 降级逻辑）
-│   └── core.ts       # 框架无关的核心实现
-├── frameworks/       # 框架特定实现
-│   ├── react.ts      # React 特定实现
-│   └── vue.ts        # Vue 3 特定实现
-└── __tests__/        # 测试文件
-    ├── useDefer.test.ts
-    ├── framework-detection.test.ts
-    ├── utils.test.ts
-    └── integration.test.ts
+use-defer/
+├── src/
+│   ├── core/
+│   │   ├── core.ts          # 框架无关的核心实现
+│   │   └── utils.ts         # 工具函数（requestAnimationFrame 兼容性）
+│   ├── frameworks/
+│   │   ├── react.ts         # React 特定的 useDefer 实现
+│   │   └── vue.ts           # Vue 3 特定的 useDefer 实现
+│   ├── __tests__/
+│   │   ├── useDefer.test.ts # 核心功能测试
+│   │   └── integration.test.ts # 集成测试
+│   └── index.ts             # 主入口文件，导出所有实现
+├── examples/
+│   ├── basic.jsx            # React 使用示例
+│   ├── basic.vue            # Vue 3 使用示例
+│   ├── test-usage.js        # 基本使用示例
+│   └── code-structure.md    # 本文档
+├── docs/
+│   ├── summary.md           # 项目总结
+│   ├── quick-reference.md   # 快速参考
+│   └── publishing-guide.md  # 发布指南
+├── scripts/
+│   ├── create-package.sh    # 创建包的脚本
+│   ├── publish.sh           # 发布脚本
+│   └── release.sh           # 发布脚本
+├── package.json             # 包配置
+├── tsconfig.json            # TypeScript 配置
+├── tsup.config.ts           # 构建配置
+├── vitest.config.ts         # 测试配置
+└── README.md                # 项目文档
 ```
 
-## 目录说明
+## 核心文件说明
 
-### `src/index.ts` - 主入口
+### 1. src/core/core.ts
 
-- 自动框架检测逻辑
-- 智能选择相应的实现
-- 导出所有公共 API
+框架无关的核心实现，不依赖任何特定框架。
 
-### `src/core/` - 核心功能
+**主要功能：**
 
-- `utils.ts`: 包含 `requestAnimationFrame` 降级逻辑的工具函数
-- `core.ts`: 框架无关的核心实现，所有框架实现都基于此
+- 使用 `requestAnimationFrame` 计数动画帧
+- 提供清理机制
+- 支持自定义最大帧数
 
-### `src/frameworks/` - 框架特定实现
+**关键特性：**
 
-- `react.ts`: React 特定的 useDefer 实现
-- `vue.ts`: Vue 3 特定的 useDefer 实现
+- 纯函数实现
+- 无外部依赖
+- 适用于任何 JavaScript 环境
 
-## 代码复用
+### 2. src/core/utils.ts
 
-### 1. 工具函数抽离 (`src/core/utils.ts`)
+提供 `requestAnimationFrame` 的兼容性处理。
 
-将 `requestAnimationFrame` 降级逻辑抽离到 `utils.ts`，避免代码重复：
+**主要功能：**
 
-```typescript
-// src/core/utils.ts
-export const getAnimationFrame = () => {
-  if (typeof requestAnimationFrame !== "undefined") {
-    return requestAnimationFrame;
-  }
-  // 降级到 setTimeout，模拟 60fps
-  return (callback: FrameRequestCallback) => {
-    return setTimeout(callback, 1000 / 60) as unknown as number;
-  };
-};
+- 检测浏览器环境
+- 提供降级方案（setTimeout）
+- 统一 API 接口
 
-export const getCancelAnimationFrame = () => {
-  if (typeof cancelAnimationFrame !== "undefined") {
-    return cancelAnimationFrame;
-  }
-  // 降级到 clearTimeout
-  return (id: number) => {
-    clearTimeout(id);
-  };
-};
-```
+### 3. src/frameworks/react.ts
 
-### 2. 各框架实现复用工具函数
+React 特定的实现，利用 React 的生命周期管理。
 
-所有框架实现都导入并使用相同的工具函数：
+**主要功能：**
 
-```typescript
-// src/frameworks/react.ts, src/frameworks/vue.ts, src/core/core.ts
-import { getAnimationFrame, getCancelAnimationFrame } from "../core/utils";
+- 使用 `useState` 管理状态
+- 使用 `useEffect` 处理副作用
+- 自动清理资源
 
-// 使用统一的工具函数
-const requestAnimationFrame = getAnimationFrame();
-const cancelAnimationFrame = getCancelAnimationFrame();
-```
+### 4. src/frameworks/vue.ts
 
-## 优势
+Vue 3 特定的实现，利用 Vue 的响应式系统。
 
-1. **清晰结构**: `src` 目录只包含入口文件，便于查看
-2. **逻辑分离**: 核心功能、框架实现、工具函数分别放在不同目录
-3. **代码复用**: 降级逻辑只写一次，所有实现共享
-4. **维护性**: 修改降级逻辑只需要改一个地方
-5. **一致性**: 所有框架实现使用相同的降级策略
-6. **测试覆盖**: 工具函数有独立的测试
+**主要功能：**
 
-## 使用示例
+- 使用 `ref` 管理响应式状态
+- 使用 `onUnmounted` 处理清理
+- 集成 Vue 3 组合式 API
+
+### 5. src/index.ts
+
+主入口文件，导出所有可用的实现。
+
+**导出内容：**
+
+- `useCoreDefer` - 框架无关实现
+- `useReactDefer` - React 特定实现
+- `useVueDefer` - Vue 3 特定实现
+- `default` - 默认导出（使用核心实现）
+
+## 使用方式
+
+### 框架无关使用（推荐）
 
 ```javascript
-// 自动检测框架
-import { useDefer } from "use-defer";
-const defer = useDefer(100);
+import { useCoreDefer } from "@evander0x/use-defer";
 
-// 手动选择框架实现
-import { useReactDefer, useVueDefer, useCoreDefer } from "use-defer";
-const reactDefer = useReactDefer(100);
-const vueDefer = useVueDefer(100);
-const coreDefer = useCoreDefer(100);
+const defer = useCoreDefer(100);
+const shouldShow = defer(30);
 ```
+
+### React 使用
+
+```jsx
+import { useReactDefer } from "@evander0x/use-defer";
+
+function MyComponent() {
+  const defer = useReactDefer(100);
+  return <div>{defer(30) && <p>30帧后显示</p>}</div>;
+}
+```
+
+### Vue 3 使用
+
+```vue
+<script setup>
+import { useVueDefer } from "@evander0x/use-defer";
+
+const defer = useVueDefer(100);
+const shouldShow = defer(30);
+</script>
+
+<template>
+  <div>
+    <p v-if="shouldShow">30帧后显示</p>
+  </div>
+</template>
+```
+
+## 依赖管理
+
+- **useCoreDefer**: 无额外依赖
+- **useReactDefer**: 需要安装 `react`
+- **useVueDefer**: 需要安装 `vue`
+
+## 构建输出
+
+使用 tsup 构建，生成以下文件：
+
+- `dist/index.js` - CommonJS 格式
+- `dist/index.mjs` - ESM 格式
+- `dist/index.d.ts` - TypeScript 类型定义
+
+## 测试覆盖
+
+- **单元测试**: 测试核心功能
+- **集成测试**: 测试不同实现的兼容性
+- **类型测试**: 确保 TypeScript 类型正确
+
+## 浏览器兼容性
+
+- **现代浏览器**: 使用原生 `requestAnimationFrame`
+- **旧版浏览器**: 降级到 `setTimeout` 模拟 60fps
+- **Node.js**: 使用 `setTimeout` 降级方案

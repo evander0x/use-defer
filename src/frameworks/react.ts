@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { getAnimationFrame, getCancelAnimationFrame } from "../core/utils";
 
 /**
@@ -8,6 +7,10 @@ import { getAnimationFrame, getCancelAnimationFrame } from "../core/utils";
  * @returns A function that returns true if the current frame count is greater than or equal to the provided number
  */
 export function useDefer(maxCount = 100) {
+  // 动态导入 React hooks
+  const React = require("react");
+  const { useState, useEffect } = React;
+
   const [count, setCount] = useState(0);
 
   useEffect(() => {

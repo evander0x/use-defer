@@ -37,10 +37,6 @@
     "email": "wcj46259@gmail.com"
   },
   "license": "MIT",
-  "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "vue": "^3.0.0"
-  },
   "devDependencies": {
     "@testing-library/react": "^16.3.0",
     "@types/node": "^20.0.0",

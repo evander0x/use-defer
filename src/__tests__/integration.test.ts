@@ -1,47 +1,74 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { useDefer, useCoreDefer, getDetectedFramework } from "../index";
-
-// Mock requestAnimationFrame
-const mockRequestAnimationFrame = vi.fn();
-const mockCancelAnimationFrame = vi.fn();
-
-global.requestAnimationFrame = mockRequestAnimationFrame;
-global.cancelAnimationFrame = mockCancelAnimationFrame;
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { useCoreDefer } from "../index";
 
 describe("Integration Tests", () => {
+  let mockRequestAnimationFrame: any;
+  let mockCancelAnimationFrame: any;
+  let rafCallbacks: Array<() => void> = [];
+  let rafId = 0;
+
   beforeEach(() => {
-    vi.clearAllMocks();
+    // 重置状态
+    rafCallbacks = [];
+    rafId = 0;
+
+    // 模拟 requestAnimationFrame
+    mockRequestAnimationFrame = vi.fn((callback: () => void) => {
+      rafCallbacks.push(callback);
+      return ++rafId;
+    });
+
+    // 模拟 cancelAnimationFrame
+    mockCancelAnimationFrame = vi.fn((id: number) => {
+      // 简单的取消逻辑
+    });
+
+    // 替换全局函数
+    global.requestAnimationFrame = mockRequestAnimationFrame;
+    global.cancelAnimationFrame = mockCancelAnimationFrame;
   });
 
-  it("should work with auto-detected useDefer", () => {
-    const defer = useDefer(100);
-    expect(typeof defer).toBe("function");
-
-    // 测试函数调用
-    const result = defer(10);
-    expect(typeof result).toBe("boolean");
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it("should work with core useDefer", () => {
     const defer = useCoreDefer(100);
+
+    // 测试基本功能
     expect(typeof defer).toBe("function");
 
-    // 测试函数调用
-    const result = defer(10);
-    expect(typeof result).toBe("boolean");
+    // 初始状态：已经过了 1 帧
+    expect(defer(0)).toBe(true);
+    expect(defer(1)).toBe(true);
+    expect(defer(2)).toBe(false);
+
+    // 执行几帧后测试
+    if (rafCallbacks[0]) rafCallbacks[0]();
+    if (rafCallbacks[1]) rafCallbacks[1]();
+
+    expect(defer(2)).toBe(true);
+    expect(defer(3)).toBe(true);
+    expect(defer(4)).toBe(false);
   });
 
-  it("should handle different maxCount values", () => {
-    const defer1 = useDefer(50);
-    const defer2 = useDefer(200);
+  it("should work with multiple instances", () => {
+    const defer1 = useCoreDefer(50);
+    const defer2 = useCoreDefer(200);
 
+    // 测试多个实例可以独立工作
     expect(typeof defer1).toBe("function");
     expect(typeof defer2).toBe("function");
-  });
 
-  it("should detect framework correctly", () => {
-    const framework = getDetectedFramework();
-    expect(typeof framework).toBe("string");
-    expect(["react", "vue", "unknown"]).toContain(framework);
+    // 初始状态
+    expect(defer1(1)).toBe(true);
+    expect(defer2(1)).toBe(true);
+
+    // 执行几帧后测试
+    if (rafCallbacks[0]) rafCallbacks[0]();
+    if (rafCallbacks[1]) rafCallbacks[1]();
+
+    expect(defer1(2)).toBe(true);
+    expect(defer2(2)).toBe(true);
   });
 });

@@ -1,4 +1,3 @@
-import { ref, onUnmounted } from "vue";
 import { getAnimationFrame, getCancelAnimationFrame } from "../core/utils";
 
 /**
@@ -8,6 +7,10 @@ import { getAnimationFrame, getCancelAnimationFrame } from "../core/utils";
  * @returns A function that returns true if the current frame count is greater than or equal to the provided number
  */
 export function useDefer(maxCount = 100) {
+  // 动态导入 Vue 3 APIs
+  const Vue = require("vue");
+  const { ref, onUnmounted } = Vue;
+
   const count = ref(0);
   let rafId: number | null = null;
 

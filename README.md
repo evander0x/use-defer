@@ -1,6 +1,6 @@
 # use-defer
 
-一个智能的框架无关 hook，自动检测 React 或 Vue 环境，用于使用 `requestAnimationFrame` 延迟执行操作。
+一个框架无关的 hook，支持 React 和 Vue 环境，用于使用 `requestAnimationFrame` 延迟执行操作。
 
 ## 安装
 
@@ -10,14 +10,14 @@ npm install @evander0x/use-defer
 
 ## 使用方法
 
-### 自动框架检测（推荐）
+### 框架无关实现（推荐）
 
-包会自动检测你的项目环境并选择相应的实现：
+如果你想要一个不依赖特定框架的实现：
 
 ```javascript
-import { useDefer } from "@evander0x/use-defer";
+import { useCoreDefer } from "@evander0x/use-defer";
 
-const defer = useDefer(100); // 最多计数到 100 帧
+const defer = useCoreDefer(100); // 最多计数到 100 帧
 
 // 检查是否应该显示内容
 const shouldShow = defer(30);
@@ -35,9 +35,9 @@ const shouldShowLater = defer(60);
 </template>
 
 <script setup lang="ts">
-import { useDefer } from "@evander0x/use-defer";
+import { useVueDefer } from "@evander0x/use-defer";
 
-const defer = useDefer(100); // 自动检测到 Vue 环境
+const defer = useVueDefer(100); // Vue 特定实现
 
 // 检查是否应该显示内容
 const shouldShow = defer(30);
@@ -49,10 +49,10 @@ const shouldShowLater = defer(60);
 
 ```jsx
 import React from "react";
-import { useDefer } from "@evander0x/use-defer";
+import { useReactDefer } from "@evander0x/use-defer";
 
 function MyComponent() {
-  const defer = useDefer(100); // 自动检测到 React 环境
+  const defer = useReactDefer(100); // React 特定实现
 
   return (
     <div>
@@ -63,37 +63,21 @@ function MyComponent() {
 }
 ```
 
-### 手动选择框架实现
+### 默认导出
 
-如果你想要明确指定使用哪个框架的实现：
-
-```javascript
-import { useReactDefer, useVueDefer, useCoreDefer } from "@evander0x/use-defer";
-
-// React 特定实现
-const reactDefer = useReactDefer(100);
-
-// Vue 特定实现
-const vueDefer = useVueDefer(100);
-
-// 框架无关实现
-const coreDefer = useCoreDefer(100);
-```
-
-### 检测当前框架
+为了向后兼容，包也提供了默认导出，使用框架无关的实现：
 
 ```javascript
-import { getDetectedFramework } from "@evander0x/use-defer";
+import useDefer from "@evander0x/use-defer";
 
-const framework = getDetectedFramework();
-console.log(framework); // 'react', 'vue', 或 'unknown'
+const defer = useDefer(100);
 ```
 
 ## API
 
-### useDefer(maxCount?: number)
+### useCoreDefer(maxCount?: number)
 
-自动检测框架并创建相应的延迟函数。
+框架无关的延迟实现。
 
 #### 参数
 
@@ -105,19 +89,15 @@ console.log(framework); // 'react', 'vue', 或 'unknown'
 
 ### useReactDefer(maxCount?: number)
 
-React 特定的延迟 hook。
+React 特定的延迟 hook。需要安装 `react` 依赖。
 
 ### useVueDefer(maxCount?: number)
 
-Vue 3 特定的延迟 hook。
+Vue 3 特定的延迟 hook。需要安装 `vue` 依赖。
 
-### useCoreDefer(maxCount?: number)
+### useDefer(maxCount?: number)
 
-框架无关的延迟实现。
-
-### getDetectedFramework()
-
-返回检测到的框架类型：`'react'`、`'vue'` 或 `'unknown'`。
+默认导出，使用框架无关的实现。为了向后兼容而提供。
 
 ## 与 React 内置功能的区别
 
@@ -142,11 +122,11 @@ Vue 3 特定的延迟 hook。
 
 `useDefer` 使用 `requestAnimationFrame` 来计数动画帧，具有以下特性：
 
-### 框架检测逻辑
+### 实现选择
 
-1. **React 检测**: 检查 `react` 模块是否可用，或检查全局 `React` 对象
-2. **Vue 检测**: 检查 `vue` 模块是否可用，或检查全局 `Vue` 对象
-3. **降级**: 如果无法检测到特定框架，使用框架无关的实现
+- **useCoreDefer**: 框架无关实现，不依赖任何特定框架
+- **useReactDefer**: React 特定实现，利用 React 的生命周期管理
+- **useVueDefer**: Vue 3 特定实现，利用 Vue 的响应式系统
 
 ### 兼容性处理
 
@@ -175,9 +155,9 @@ Vue 3 特定的延迟 hook。
 </template>
 
 <script setup>
-import { useDefer } from "@evander0x/use-defer";
+import { useVueDefer } from "@evander0x/use-defer";
 
-const defer = useDefer(); // 自动检测框架
+const defer = useVueDefer(); // Vue 特定实现
 const showImmediate = true;
 const showAfter10Frames = defer(10);
 const showAfter30Frames = defer(30);
@@ -197,12 +177,12 @@ const showAfter30Frames = defer(30);
 
 <script setup>
 import { computed } from "vue";
-import { useDefer } from "@evander0x/use-defer";
+import { useVueDefer } from "@evander0x/use-defer";
 
 const items = ref([
   /* 大量数据 */
 ]);
-const defer = useDefer(); // 自动检测框架
+const defer = useVueDefer(); // Vue 特定实现
 
 const visibleItems = computed(() => {
   const frame = defer(0)
@@ -224,15 +204,15 @@ const visibleItems = computed(() => {
 - **现代浏览器**: 使用原生的 `requestAnimationFrame`
 - **旧版浏览器**: 自动降级到 `setTimeout` 模拟 60fps
 - **Node.js 环境**: 同样使用 `setTimeout` 降级方案
-- **框架支持**: 自动检测 React、Vue 3 和其他框架
+- **框架支持**: 支持 React、Vue 3 和其他框架
 
 ## 注意事项
 
 - 帧计数会在组件卸载时自动清理
 - 默认最大帧数为 100，可以根据需要调整
 - 在非浏览器环境中，使用 `setTimeout` 模拟动画帧，性能可能略有差异
-- 框架检测在首次调用 `useDefer` 时进行，后续调用会复用检测结果
-- 如果自动检测失败，会使用框架无关的实现
+- **依赖管理**：使用 `useReactDefer` 需要安装 `react` 依赖，使用 `useVueDefer` 需要安装 `vue` 依赖
+- 推荐使用 `useCoreDefer` 如果你不需要特定框架的功能，这样可以避免额外的依赖
 
 ## 许可证
 
