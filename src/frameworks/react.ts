@@ -18,10 +18,9 @@ export function useDefer(maxCount = 100) {
     function updateFrame() {
       setCount((prevCount: number) => {
         const newCount = prevCount + 1;
-        if (newCount >= maxCount) {
-          return prevCount;
+        if (newCount < maxCount) {
+          rafId = requestAnimationFrame(updateFrame);
         }
-        rafId = requestAnimationFrame(updateFrame);
         return newCount;
       });
     }
