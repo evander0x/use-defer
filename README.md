@@ -13,7 +13,6 @@ npm install vue-use-defer
 ```vue
 <template>
   <div>
-    <p>当前帧数: {{ frameCount }}</p>
     <p v-if="shouldShow">这个内容在第 30 帧后显示</p>
     <p v-if="shouldShowLater">这个内容在第 60 帧后显示</p>
   </div>
@@ -23,16 +22,6 @@ npm install vue-use-defer
 import { useDefer } from "vue-use-defer";
 
 const defer = useDefer(100); // 最多计数到 100 帧
-const frameCount = ref(0);
-
-// 创建一个响应式的帧计数器
-const updateFrameCount = () => {
-  frameCount.value++;
-  if (frameCount.value < 100) {
-    requestAnimationFrame(updateFrameCount);
-  }
-};
-updateFrameCount();
 
 // 检查是否应该显示内容
 const shouldShow = defer(30);
@@ -119,11 +108,19 @@ const visibleItems = computed(() => {
 </script>
 ```
 
+## 兼容性
+
+`useDefer` 具有良好的浏览器兼容性：
+
+- **现代浏览器**: 使用原生的 `requestAnimationFrame`
+- **旧版浏览器**: 自动降级到 `setTimeout` 模拟 60fps
+- **Node.js 环境**: 同样使用 `setTimeout` 降级方案
+
 ## 注意事项
 
-- 这个 hook 依赖于 `requestAnimationFrame`，只在浏览器环境中工作
 - 帧计数会在组件卸载时自动清理
 - 默认最大帧数为 100，可以根据需要调整
+- 在非浏览器环境中，使用 `setTimeout` 模拟动画帧，性能可能略有差异
 
 ## 许可证
 
