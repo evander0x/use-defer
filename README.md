@@ -1,11 +1,11 @@
-# useDefer
+# use-defer
 
 一个智能的框架无关 hook，自动检测 React 或 Vue 环境，用于使用 `requestAnimationFrame` 延迟执行操作。
 
 ## 安装
 
 ```bash
-npm install use-defer
+npm install @evander0x/use-defer
 ```
 
 ## 使用方法
@@ -15,7 +15,7 @@ npm install use-defer
 包会自动检测你的项目环境并选择相应的实现：
 
 ```javascript
-import { useDefer } from "use-defer";
+import { useDefer } from "@evander0x/use-defer";
 
 const defer = useDefer(100); // 最多计数到 100 帧
 
@@ -35,7 +35,7 @@ const shouldShowLater = defer(60);
 </template>
 
 <script setup lang="ts">
-import { useDefer } from "use-defer";
+import { useDefer } from "@evander0x/use-defer";
 
 const defer = useDefer(100); // 自动检测到 Vue 环境
 
@@ -49,7 +49,7 @@ const shouldShowLater = defer(60);
 
 ```jsx
 import React from "react";
-import { useDefer } from "use-defer";
+import { useDefer } from "@evander0x/use-defer";
 
 function MyComponent() {
   const defer = useDefer(100); // 自动检测到 React 环境
@@ -68,7 +68,7 @@ function MyComponent() {
 如果你想要明确指定使用哪个框架的实现：
 
 ```javascript
-import { useReactDefer, useVueDefer, useCoreDefer } from "use-defer";
+import { useReactDefer, useVueDefer, useCoreDefer } from "@evander0x/use-defer";
 
 // React 特定实现
 const reactDefer = useReactDefer(100);
@@ -83,7 +83,7 @@ const coreDefer = useCoreDefer(100);
 ### 检测当前框架
 
 ```javascript
-import { getDetectedFramework } from "use-defer";
+import { getDetectedFramework } from "@evander0x/use-defer";
 
 const framework = getDetectedFramework();
 console.log(framework); // 'react', 'vue', 或 'unknown'
@@ -175,7 +175,7 @@ Vue 3 特定的延迟 hook。
 </template>
 
 <script setup>
-import { useDefer } from "use-defer";
+import { useDefer } from "@evander0x/use-defer";
 
 const defer = useDefer(); // 自动检测框架
 const showImmediate = true;
@@ -197,7 +197,7 @@ const showAfter30Frames = defer(30);
 
 <script setup>
 import { computed } from "vue";
-import { useDefer } from "use-defer";
+import { useDefer } from "@evander0x/use-defer";
 
 const items = ref([
   /* 大量数据 */
