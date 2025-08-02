@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { useDefer, useReactDefer, useVueDefer, useCoreDefer } from "../index";
+import { useDefer, useCoreDefer, getDetectedFramework } from "../index";
 
 // Mock requestAnimationFrame
 const mockRequestAnimationFrame = vi.fn();
@@ -22,24 +22,6 @@ describe("Integration Tests", () => {
     expect(typeof result).toBe("boolean");
   });
 
-  it("should work with React-specific useDefer", () => {
-    const defer = useReactDefer(100);
-    expect(typeof defer).toBe("function");
-
-    // 测试函数调用
-    const result = defer(10);
-    expect(typeof result).toBe("boolean");
-  });
-
-  it("should work with Vue-specific useDefer", () => {
-    const defer = useVueDefer(100);
-    expect(typeof defer).toBe("function");
-
-    // 测试函数调用
-    const result = defer(10);
-    expect(typeof result).toBe("boolean");
-  });
-
   it("should work with core useDefer", () => {
     const defer = useCoreDefer(100);
     expect(typeof defer).toBe("function");
@@ -55,5 +37,11 @@ describe("Integration Tests", () => {
 
     expect(typeof defer1).toBe("function");
     expect(typeof defer2).toBe("function");
+  });
+
+  it("should detect framework correctly", () => {
+    const framework = getDetectedFramework();
+    expect(typeof framework).toBe("string");
+    expect(["react", "vue", "unknown"]).toContain(framework);
   });
 });
