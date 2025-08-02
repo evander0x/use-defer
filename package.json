@@ -56,10 +56,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/evander/use-defer.git"
+    "url": "https://github.com/evander0x/use-defer.git"
   },
   "bugs": {
-    "url": "https://github.com/evander/use-defer/issues"
+    "url": "https://github.com/evander0x/use-defer/issues"
   },
-  "homepage": "https://github.com/evander/use-defer#readme"
+  "homepage": "https://github.com/evander0x/use-defer#readme"
 }
