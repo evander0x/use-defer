@@ -34,8 +34,9 @@
 import { ref, onMounted, computed } from "vue";
 import { useDefer } from "../src/index";
 
-const frameCount = ref(0);
 const defer = useDefer(100);
+
+const frameCount = ref(0);
 
 // 创建一个响应式的帧计数器
 const updateFrameCount = () => {

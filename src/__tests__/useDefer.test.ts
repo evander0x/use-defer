@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { useDefer } from "../index";
+import { useDefer, getDetectedFramework } from "../index";
 
 // Mock requestAnimationFrame
 const mockRequestAnimationFrame = vi.fn();
@@ -17,13 +17,6 @@ describe("useDefer", () => {
     const defer = useDefer();
     expect(typeof defer).toBe("function");
   });
-
-  //   it("should start counting from 0", () => {
-  //     const defer = useDefer();
-  //     // 由于 useDefer 内部使用 requestAnimationFrame，初始时 count 为 0
-  //     // 但第一次调用 updateFrame 后 count 会变为 1
-  //     expect(defer(0)).toBe(false);
-  //   });
 
   it("should work with frame counting", () => {
     let frameCount = 0;
@@ -54,5 +47,13 @@ describe("useDefer", () => {
   it("should use default maxCount of 100", () => {
     const defer = useDefer();
     expect(typeof defer).toBe("function");
+  });
+});
+
+describe("getDetectedFramework", () => {
+  it("should return a framework type", () => {
+    const framework = getDetectedFramework();
+    expect(typeof framework).toBe("string");
+    expect(["react", "vue", "unknown"]).toContain(framework);
   });
 });

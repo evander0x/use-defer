@@ -1,7 +1,7 @@
 {
-  "name": "vue-use-defer",
+  "name": "use-defer",
   "version": "1.2.0",
-  "description": "A Vue 3 composable for deferring operations using requestAnimationFrame",
+  "description": "A framework-agnostic hook for deferring operations using requestAnimationFrame",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -23,13 +23,14 @@
     "type-check": "tsc --noEmit"
   },
   "keywords": [
+    "react",
     "vue",
-    "vue3",
-    "composable",
     "hook",
+    "composable",
     "defer",
     "requestAnimationFrame",
-    "performance"
+    "performance",
+    "framework-agnostic"
   ],
   "author": {
     "name": "Evander",
@@ -37,10 +38,12 @@
   },
   "license": "MIT",
   "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@types/react": "^18.3.23",
     "jsdom": "^26.1.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
@@ -49,10 +52,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/evander/vue-use-defer.git"
+    "url": "https://github.com/evander/use-defer.git"
   },
   "bugs": {
-    "url": "https://github.com/evander/vue-use-defer/issues"
+    "url": "https://github.com/evander/use-defer/issues"
   },
-  "homepage": "https://github.com/evander/vue-use-defer#readme"
+  "homepage": "https://github.com/evander/use-defer#readme"
 }
