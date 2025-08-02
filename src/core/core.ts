@@ -19,10 +19,10 @@ export class DeferManager {
       if (this.isDestroyed) return;
 
       this.count++;
-      if (this.count >= this.maxCount) {
-        return;
+      // 继续计数直到达到 maxCount，然后停止
+      if (this.count < this.maxCount) {
+        this.rafId = requestAnimationFrame(updateFrame);
       }
-      this.rafId = requestAnimationFrame(updateFrame);
     };
 
     updateFrame();
