@@ -72,7 +72,7 @@ describe("Framework Detection", () => {
   });
 
   it("should work with useDefer function", () => {
-    const { useDefer } = require("../index");
+    const { useDefer } = require("../../dist/index.js");
     const defer = useDefer(100);
     expect(typeof defer).toBe("function");
   });
