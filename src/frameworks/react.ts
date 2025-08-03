@@ -1,4 +1,4 @@
-import { getAnimationFrame, getCancelAnimationFrame } from "../core/utils";
+import { getAnimationFrame, getCancelAnimationFrame } from "../utils";
 import React, { useState, useEffect } from "react";
 
 /**

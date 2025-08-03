@@ -1,4 +1,4 @@
-import { getAnimationFrame, getCancelAnimationFrame } from "../core/utils";
+import { getAnimationFrame, getCancelAnimationFrame } from "../utils";
 
 /**
  * Vue 3 特定的 useDefer 实现

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getAnimationFrame, getCancelAnimationFrame } from "../core/utils";
+import { getAnimationFrame, getCancelAnimationFrame } from "../utils";
 
 describe("Utils", () => {
   beforeEach(() => {
